@@ -4,13 +4,7 @@ import { motion } from "framer-motion";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Bot, User } from "lucide-react";
-
-export interface Message {
-  id: string;
-  content: string;
-  role: "user" | "assistant";
-  timestamp: Date;
-}
+import { Message } from "@/lib/types";
 
 interface ChatMessageProps {
   message: Message;

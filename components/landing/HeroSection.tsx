@@ -3,9 +3,10 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Sparkles, BookOpen } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import StudentChecker from "../layout/StudentChecker";
 
 export function HeroSection() {
   return (
@@ -110,17 +111,18 @@ export function HeroSection() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
         >
-          <Button asChild size="lg" className="text-base px-8 py-6 group">
-            <Link href="/chat">
-              Start Chatting
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </Button>
+          <StudentChecker
+            title="Let's See if You are a Student"
+            description="Please enter your email to check your student status."
+            triggerText="Get Started"
+            className="py-6 px-8 text-lg font-medium"
+            triggerClassName="h-12 px-8 text-lg font-medium"
+          />
           <Button
             asChild
             size="lg"
             variant="outline"
-            className="text-base px-8 py-6"
+            className="text-base px-8 py-6 hover:text-primary-foreground"
           >
             <Link href="#features">Learn More</Link>
           </Button>

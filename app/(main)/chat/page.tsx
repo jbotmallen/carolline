@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 export default async function ChatPage() {
   const sessionCookie = await cookies();
 
-  if (!sessionCookie.get("session")) {
+  if (!sessionCookie.get("email")) {
     // Redirect to home page if no session cookie is found
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-4 gap-5">

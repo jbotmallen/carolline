@@ -3,32 +3,27 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChatMessage, Message } from "./ChatMessage";
+import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { BookOpen, Sparkles, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Sparkles } from "lucide-react";
+import { Message } from "@/lib/types";
 
-// Mock function to simulate AI response - replace with actual API call
-const generateAIResponse = async (userMessage: string): Promise<string> => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+async function callAskAPI(question: string) {
+  const res = await fetch("/api/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question, k: 5 }),
+  });
 
-  // Mock responses based on keywords
-  const lowerMessage = userMessage.toLowerCase();
-
-  if (lowerMessage.includes("handbook") || lowerMessage.includes("rules")) {
-    return "I can help you find information from the student handbook. The handbook covers academic policies, conduct guidelines, campus resources, and student rights. What specific topic would you like to know more about?";
-  } else if (lowerMessage.includes("policy") || lowerMessage.includes("policies")) {
-    return "Our school has various policies including attendance policy, academic integrity policy, and code of conduct. Which policy would you like to learn about?";
-  } else if (lowerMessage.includes("hours") || lowerMessage.includes("schedule")) {
-    return "The campus is open Monday through Friday from 7:00 AM to 10:00 PM, and on weekends from 9:00 AM to 6:00 PM. The library has extended hours during exam periods.";
-  } else if (lowerMessage.includes("help") || lowerMessage.includes("hello") || lowerMessage.includes("hi")) {
-    return "Hello! I'm Carolline, your student handbook assistant. I can help you find information about school policies, rules, resources, and procedures. What would you like to know?";
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error || "API error");
   }
 
-  return "I'd be happy to help you find that information in the student handbook. Could you please be more specific about what you're looking for? You can ask about policies, rules, procedures, or campus resources.";
-};
+  const data = await res.json();
+  return data as { answer: string; citations?: Array<{ documentId: number; chunkIndex: number; snippet: string }> };
+}
+
 
 const INITIAL_MESSAGES: Message[] = [
   {
@@ -44,7 +39,6 @@ export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector(
@@ -68,12 +62,11 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      // Replace this with actual API call
-      const aiResponse = await generateAIResponse(content);
+      const { answer } = await callAskAPI(content);
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: aiResponse,
+        content: answer,
         role: "assistant",
         timestamp: new Date(),
       };
@@ -93,38 +86,9 @@ export function ChatInterface() {
     }
   };
 
-  return (
-    <div className="flex flex-col h-screen bg-background">
-      {/* Header */}
-      <motion.header
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/30"
-      >
-        <div className="flex items-center justify-between p-4 max-w-6xl mx-auto">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="h-9 w-9 rounded-lg hover:bg-muted flex items-center justify-center transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <div className="relative">
-              <BookOpen className="h-8 w-8 text-primary" />
-              <Sparkles className="h-4 w-4 text-primary absolute -top-1 -right-1" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold font-serif">Carolline</h1>
-              <p className="text-xs text-muted-foreground">
-                Student Handbook Assistant
-              </p>
-            </div>
-          </div>
-          <ThemeToggle />
-        </div>
-      </motion.header>
 
+  return (
+    <div className="flex flex-col h-screen bg-background pt-16">
       {/* Messages Area */}
       <ScrollArea ref={scrollAreaRef} className="flex-1 px-4">
         <div className="max-w-4xl mx-auto py-6">

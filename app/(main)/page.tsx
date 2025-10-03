@@ -1,6 +1,7 @@
 import { HeroSection } from "@/components/landing/HeroSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { ContactSection } from "@/components/landing/ContactSection";
+import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
       <HeroSection />
       <FeaturesSection />
       <ContactSection />
+      <Footer />
     </main>
   );
 }
