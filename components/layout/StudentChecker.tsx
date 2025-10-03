@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState, useTransition } from 'react'
+import React, { useState, useTransition } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from "@/components/ui/button"
 import {
@@ -8,7 +8,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import Image from 'next/image'
